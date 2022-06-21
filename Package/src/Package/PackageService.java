@@ -20,8 +20,8 @@ public class PackageService {
         System.out.println("여행사: ");
         String agency = sc.next();
 
-        System.out.println("목적지: ");
-        String dest = sc.next();
+        // System.out.println("목적지: ");
+        // String dest = sc.next();
 
         System.out.println("기간: ");
         String period = sc.next();
@@ -38,7 +38,7 @@ public class PackageService {
         System.out.println("가격: ");
         int price = sc.nextInt();
 
-        Package p = new Package(prod_num, flight_id, agency, dest, period, manual, hotel, flight_type, price);
+        Package p = new Package(prod_num, flight_id, agency, period, manual, hotel, flight_type, price);
 
         dao.insert(p);
     }

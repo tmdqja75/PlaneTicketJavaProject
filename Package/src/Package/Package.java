@@ -11,12 +11,12 @@ public class Package {
     private boolean flight_type;
     private int product_price;
 
-    public Package(String product_num, String flight_id, String agency, String destination, String period,
+    public Package(String product_num, String flight_id, String agency, String period,
             String manual, boolean isHotel, boolean flight_type, int product_price) {
         this.product_num = product_num;
         this.flight_id = flight_id;
         this.agency = agency;
-        this.destination = destination;
+        // this.destination = destination;
         this.period = period;
         this.manual = manual;
         this.isHotel = isHotel;
