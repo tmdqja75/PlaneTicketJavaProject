@@ -22,7 +22,7 @@ public class PurchaseDao {
 
 		Connection conn = dbconn.getConn();
 
-		String sql = "select * from product";
+		String sql = "select * from product"; // product table의 모든정보를 출력하게 해두었음. product class 구현에 따라서 변경할것
 		PreparedStatement pstmt;
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -62,7 +62,7 @@ public class PurchaseDao {
 			pstmt.setInt(4, r.getTicket_count());
 			pstmt.setBoolean(5, r.isPay());
 			
-			for (int i = 0; i<r.getTicket_count();i++) {
+			for (int i = 0; i<r.getTicket_count();i++) { // Ticker_count만큼 db에 추가
 			pstmt.executeUpdate();
 			}
 
@@ -408,14 +408,14 @@ public class PurchaseDao {
 
 //	 6. 좌석수 처리(-) , 결제시 적용
 	public boolean minusSeat(String id) {
-		String number = searchProductNumber(id);
-		int ticket_count = getTicketNumber(id);
-		String flight_id = searchFlightId(number);
-		int count = checkSeat(flight_id);
-		if (count - ticket_count >= 0) {
+		String number = searchProductNumber(id); // 입력된 id로부터 productnumber 받아옴
+		int ticket_count = getTicketNumber(id); // Ticket 갯수
+		String flight_id = searchFlightId(number); // productnumber를 통해 flight_id 받아옴
+		int count = checkSeat(flight_id); // 잔여석
+		if (count - ticket_count >= 0) { // 구매할 티켓 개수가 잔여석보다 작아야함
 			Connection conn = dbconn.getConn();
 
-			String sql = "update flight set remnantCount = (remnantCount - ?) where flight_id = ?";
+			String sql = "update flight set remnantCount = (remnantCount - ?) where flight_id = ?"; // 잔여석 - 티켓결제수
 
 			PreparedStatement pstmt;
 			try {
@@ -448,13 +448,13 @@ public class PurchaseDao {
 
 	// 7. 좌석수 처리(+) , 결제 취소시 적용
 	public void plusSeat(String id) {
-		String number = searchProductNumber(id);
-		int ticket_count = getTicketNumber(id);
-		String flight_id = searchFlightId(number);
+		String number = searchProductNumber(id); // id로 productnumber받아옴
+		int ticket_count = getTicketNumber(id); // Ticket 갯수
+		String flight_id = searchFlightId(number); // productnumber로 flight_id 받아옴
 
 		Connection conn = dbconn.getConn();
 
-		String sql = "update flight set remnantCount = (remnantCount + ?) where flight_id = ?";
+		String sql = "update flight set remnantCount = (remnantCount + ?) where flight_id = ?"; // 잔여석 + 티켓 결제취소수
 
 		PreparedStatement pstmt;
 		try {
@@ -476,7 +476,7 @@ public class PurchaseDao {
 		}
 	}
 
-	// 좌석수 처리(-) 일때 잔여좌석이 -가 되면 안되므로 조건확인 추가
+	// 좌석수 처리(-) 일때 잔여좌석이 -가 되면 안되므로 잔여석확인추가
 	public int checkSeat(String flight_id) {
 		Connection conn = dbconn.getConn();
 
