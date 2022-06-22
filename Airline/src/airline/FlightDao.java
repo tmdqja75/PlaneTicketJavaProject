@@ -20,13 +20,13 @@ public class FlightDao {
 		Connection conn = dbconn.getConn();
 
 		// 2. sql
-		String sql = "insert into Flight(flight_id, operator, start_time, arrival_time, starting_point, destination,"
-				+ "remnant_count, flight_price) values(?,?,?,?,?,?,?,?)";
+		String sql = "insert into Flight(flight_id, airline, start_time, arrival_time, starting_point, destination,"
+				+ "remnantCount, flight_price) values(?,?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, p.getFlight_id());
-			pstmt.setString(2, p.getOperator());
+			pstmt.setString(2, p.getAirline());
 			pstmt.setString(3, p.getStartTime());
 			pstmt.setString(4, p.getArrivalTime());
 			pstmt.setString(5, p.getStartingPoint());
@@ -49,8 +49,9 @@ public class FlightDao {
 		}
 	}
 
-	public Flight selectByFlightId(String flight_id) {
-		Flight p = null;
+	public ArrayList<Flight> selectByFlightId(String flight_id) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		
 		ResultSet rs = null;
 		// db연결
 		Connection conn = dbconn.getConn();
@@ -67,9 +68,9 @@ public class FlightDao {
 			// sql 실행
 			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
 
-			if (rs.next()) {
-				p = new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
-						rs.getString(6),rs.getInt(7), rs.getInt(8));
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -83,9 +84,201 @@ public class FlightDao {
 				e.printStackTrace();
 			}
 		}
-		return p;
+		return list;
+	}
+	
+	public ArrayList<Flight> selectBystartingPoint(String startingPoint) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		ResultSet rs = null;
+		// db연결
+		Connection conn = dbconn.getConn();
+		// sql 문 작성
+		String sql = "select * from flight where starting_point = ?";
+
+		try {
+			// preparedstmt 객체
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			// ?매칭
+			pstmt.setString(1, startingPoint);
+
+			// sql 실행
+			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
+
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
+	public ArrayList<Flight> selectByDestination(String destination) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		ResultSet rs = null;
+		// db연결
+		Connection conn = dbconn.getConn();
+		// sql 문 작성
+		String sql = "select * from flight where destination = ?";
+
+		try {
+			// preparedstmt 객체
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			// ?매칭
+			pstmt.setString(1, destination);
+
+			// sql 실행
+			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
+
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
+	
+	public ArrayList<Flight> selectByPlace(String startingPoint, String destination) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		ResultSet rs = null;
+		// db연결
+		Connection conn = dbconn.getConn();
+		// sql 문 작성
+		String sql = "select * from flight where starting_point = ? and destination = ?";
+
+		try {
+			// preparedstmt 객체
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			// ?매칭
+			pstmt.setString(1, startingPoint);
+			pstmt.setString(2, destination);
+
+			// sql 실행
+			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
+
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
 	}
 
+	public ArrayList<Flight> selectByDay(String day) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		
+		ResultSet rs = null;
+		// db연결
+		Connection conn = dbconn.getConn();
+		// sql 문 작성
+		String sql = "select * from flight where date(start_time) = ?";
+
+		try {
+			// preparedstmt 객체
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			// ?매칭
+			pstmt.setString(1, day);
+
+			// sql 실행
+			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
+
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
+	// 고객용
+	public ArrayList<Flight> selectByPlaceAndDay(String startingPoint,String destination,String day) {
+		ArrayList<Flight> list = new ArrayList<Flight>();
+		ResultSet rs = null;
+		// db연결
+		Connection conn = dbconn.getConn();
+		// sql 문 작성
+		String sql = "select * from flight where date(start_time) = ? and starting_point = ? and destination = ?";
+
+		try {
+			// preparedstmt 객체
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			// ?매칭
+			pstmt.setString(1, day);
+			pstmt.setString(2, startingPoint);
+			pstmt.setString(3, destination);
+
+			// sql 실행
+			rs = pstmt.executeQuery();// 검색한 결과를 ResultSet으로 반환
+
+			while (rs.next()) {
+				list.add(new Flight(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),
+						rs.getString(6),rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
+	
 	public ArrayList<Flight> selectAll() {
 		ArrayList<Flight> list = new ArrayList<Flight>();
 		ResultSet rs = null;
@@ -116,12 +309,12 @@ public class FlightDao {
 	
 	public void update(Flight p) {// 
 		Connection conn = dbconn.getConn();
-		String sql = "update flight set operator=?, start_time=?, arrival_time=?, starting_point=?, destination=?, remnant_count=?, flight_price=? where flight_id=?";
+		String sql = "update flight set airline=?, start_time=?, arrival_time=?, starting_point=?, destination=?, remnantCount=?, flight_price=? where flight_id=?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, p.getOperator());
+			pstmt.setString(1, p.getAirline());
 			pstmt.setString(2, p.getStartTime());
 			pstmt.setString(3, p.getArrivalTime());
 			pstmt.setString(4, p.getStartingPoint());
@@ -199,7 +392,7 @@ public class FlightDao {
 	// 잔여석 수정
 	public void updateRemnantCount(int remnantCount, String flight_id) {
 		Connection conn = dbconn.getConn();
-		String sql = "update flight set remnant_count=? where flight_id=?";
+		String sql = "update flight set remnantCount=? where flight_id=?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);

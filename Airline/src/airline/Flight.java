@@ -2,7 +2,7 @@ package airline;
 
 public class Flight {
 	private String flight_id; // 비행편 id
-	private String operator; // 항공사
+	private String airline; // 항공사
 	private String startTime; // 출발시간
 	private String arrivalTime; // 도착시간
 	private String startingPoint; // 출발지
@@ -13,7 +13,7 @@ public class Flight {
 	public Flight(String flight_id,String operator, String startTime, String arrivalTime,
 			String startingPoint, String destination, int remnantCount,int flightPrice){
 		this.flight_id = flight_id;
-		this.operator = operator;
+		this.airline = operator;
 		this.startTime = startTime;
 		this.arrivalTime = arrivalTime;
 		this.startingPoint = startingPoint;
@@ -30,12 +30,12 @@ public class Flight {
 		this.flight_id = flight_id;
 	}
 
-	public String getOperator() {
-		return operator;
+	public String getAirline() {
+		return airline;
 	}
 
-	public void setOperator(String operator) {
-		this.operator = operator;
+	public void setAirline(String operator) {
+		this.airline = operator;
 	}
 
 	public String getStartTime() {
@@ -88,7 +88,7 @@ public class Flight {
 
 	@Override
 	public String toString() {
-		return "Flight [flight_id=" + flight_id + ", operator=" + operator + ", startTime=" + startTime
+		return "Flight [flight_id=" + flight_id + ", airline=" + airline + ", startTime=" + startTime
 				+ ", arrivalTime=" + arrivalTime + ", startingPoint=" + startingPoint + ", destination=" + destination
 				+ ", remnantCount=" + remnantCount + ", flightPrice=" + flightPrice + "]";
 	}

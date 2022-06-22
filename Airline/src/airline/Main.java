@@ -9,7 +9,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		Scanner sc = new Scanner(System.in);
 		Menu m = new Menu();
-		m.run(sc);
+		m.Flightrun(sc);
 	}
 
 }

@@ -18,7 +18,7 @@ public class FlightService {
 		String flight_id = sc.next();
 		
 		System.out.print("operator:");
-		String operator = sc.next();
+		String airline = sc.next();
 		
 		System.out.print("startTime:");
 		String startTime = sc.next();
@@ -46,7 +46,7 @@ public class FlightService {
 		System.out.print("flightPrice:");
 		int flightPrice = sc.nextInt();
 		// vo에 제품 정보를 담아
-		Flight p = new Flight(flight_id, operator, startTime, arrivalTime, startingPoint, destination, remnantCount, flightPrice);
+		Flight p = new Flight(flight_id, airline, startTime, arrivalTime, startingPoint, destination, remnantCount, flightPrice);
 		// 배열에 추가. dao.insert()가 이 작업 수행
 		dao.insert(p);
 	}
@@ -56,8 +56,8 @@ public class FlightService {
 		System.out.print("수정할 flight_id:");
 		String flight_id = sc.next();
 		
-		System.out.print("operator:");
-		String operator = sc.next();
+		System.out.print("airline:");
+		String airline = sc.next();
 		
 		System.out.print("startTime:");
 		String startTime = sc.next();
@@ -85,7 +85,7 @@ public class FlightService {
 		System.out.print("flightPrice:");
 		int flightPrice = sc.nextInt();
 		
-		Flight p = new Flight(flight_id, operator, startTime, arrivalTime, startingPoint, destination, remnantCount, flightPrice);
+		Flight p = new Flight(flight_id, airline, startTime, arrivalTime, startingPoint, destination, remnantCount, flightPrice);
         dao.update(p);
     }
 	
@@ -134,35 +134,119 @@ public class FlightService {
 
         dao.updateFlightPrice(flightPrice, flight_id);
     }
+    
+    // 전체출력
+ 	public void searchAll() {
+ 		ArrayList<Flight> list = dao.selectAll();
+ 		for (Flight p : list) {
+ 			System.out.println(p);
+ 		}
+ 	}
 
 	
 	// 제품번호로 검색
-	public void getFlightByFlightId(Scanner sc) {
+	public void searchFlightByFlightId(Scanner sc) {
 		System.out.print("search flight id: ");
 		String id = sc.next();
 
-		Flight p = dao.selectByFlightId(id);
-		if (p == null) {
-			System.out.println("없는 항공편 번호");
-		} else {
-			System.out.println(p);
+		ArrayList<Flight> list = dao.selectByFlightId(id);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
+		}
+ 		
+		
+	}
+	
+	// 고객용
+	public void searchFlightByPlace(Scanner sc) {
+		System.out.print("출발지 : ");
+		String startingPoint = sc.next();
+		
+		System.out.print("도착지 : ");
+		String destination = sc.next();
+
+		ArrayList<Flight> list = dao.selectByPlace(startingPoint, destination);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
 		}
 	}
+	
+	public void searchFlightByStartingPoint(Scanner sc) {
+		System.out.print("출발지 : ");
+		String startingPoint = sc.next();
 
-//	// 주문에서 필요한 메서드.
-//	// 주문으로 선택한 제품을 전달
-//	public Flight getProduct(int num) {
-//		return dao.selectByNum(num);
-//	}
-
-	// 전체출력
-	public void printAll() {
-		ArrayList<Flight> list = dao.selectAll();
-		for (Flight p : list) {
-			System.out.println(p);
+		ArrayList<Flight> list = dao.selectBystartingPoint(startingPoint);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
 		}
 	}
+	
+	public void searchFlightByDestination(Scanner sc) {
+		System.out.print("도착지 : ");
+		String destination = sc.next();
 
+		ArrayList<Flight> list = dao.selectByDestination(destination);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
+		}
+	}
+	
+	public void searchFlightByDay(Scanner sc) {
+		System.out.print("날짜(년-월-일 형태로 입력) : ");
+		String day = sc.next();
+
+		ArrayList<Flight> list = dao.selectByDay(day);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
+		}
+	}
+	
+	public void searchFlightByPlaceAndDay(Scanner sc) {
+		System.out.print("날짜(년-월-일 형태로 입력) : ");
+		String day = sc.next();
+
+		System.out.print("출발지 : ");
+		String startingPoint = sc.next();
+		
+		System.out.print("도착지 : ");
+		String destination = sc.next();
+		
+		ArrayList<Flight> list = dao.selectByPlaceAndDay(startingPoint, destination, day);
+		if (list.size() == 0) {
+			System.out.println("없는 항공편입니다.");
+		}
+		else {
+			for (Flight p : list) {
+	 			System.out.println(p);
+	 		}
+		}
+	}
+	
 	// 삭제
 	public void delFlight(Scanner sc) {
 		System.out.print("삭제할 항공편 id:");
