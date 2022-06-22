@@ -61,8 +61,10 @@ public class PurchaseDao {
 			pstmt.setString(3, r.getProduct_number());
 			pstmt.setInt(4, r.getTicket_count());
 			pstmt.setBoolean(5, r.isPay());
-
+			
+			for (int i = 0; i<r.getTicket_count();i++) {
 			pstmt.executeUpdate();
+			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -111,17 +113,18 @@ public class PurchaseDao {
 		}
 
 	// 3. 예매확인 - 구매자 id를 입력으로 받아서 해당 id에 해당하는 리스트 반환
-	public ArrayList<Reservation> search(String customer_id) {
+	public ArrayList<Reservation> search(String customer_id, String customer_pwd) {
 		ResultSet rs = null;
 		ArrayList<Reservation> list = new ArrayList<Reservation>();
 
 		Connection conn = dbconn.getConn();
 
-		String sql = "select num, customer_id, product_number, ticket_count, passport_id, isPay	from purchaseInfo where customer_id = ?";
+		String sql = "select num, customer_id, product_number, ticket_count, passport_id, isPay	from purchaseInfo where customer_id = ? and customer_pwd = ?";
 		PreparedStatement pstmt;
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, customer_id);
+			pstmt.setString(2, customer_pwd);
 
 			rs = pstmt.executeQuery();
 

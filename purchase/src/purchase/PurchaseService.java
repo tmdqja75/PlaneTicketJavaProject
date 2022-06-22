@@ -55,16 +55,20 @@ public class PurchaseService {
 
 	// 3. 예매 확인
 	public void checkReservation(Scanner sc) {
+		ArrayList<Reservation> list = null;
 		System.out.println("구매시 입력한 아이디를 입력하세요.");
 		String id = sc.next();
-		ArrayList<Reservation> list = dao.search(id);
-		if (list != null) {
+		System.out.println("구매시 입력한 비밀번호를 입력하세요.");
+		String pwd = sc.next();
+		
+		list = dao.search(id, pwd);
+		if (list.size() != 0) { // list != null => list.size() !=0 으로 변경 
 			for (Reservation r : list) {
 				System.out.println(r);
 			}
 
 		} else {
-			System.out.println("해당하는 아이디가 없습니다.");
+			System.out.println("아이디나 비밀번호가 잘못되었습니다.");
 
 		}
 
