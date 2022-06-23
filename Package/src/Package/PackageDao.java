@@ -1,50 +1,240 @@
-package Package;
+package travel_agency;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import conn.MysqlConnect;
 
 public class PackageDao {
-    private MysqlConnect dbconn;
+	
+	private MysqlConnect dbconn;
 
-    public PackageDao() {
-        dbconn = MysqlConnect.getInstance();
-    }
 
-    public void insert(Package p) {
-        Connection conn = dbconn.getConn();
-        String sql = "insert into product (departflight_id, arriveflight_id, agency, destination, period, manual, isHotel, flight_type, product_price) values(?,?,?,(select destination from flight where flight_id=?),datediff((SELECT start_time FROM flight where flight_id = ?), (SELECT start_time FROM flight where flight_id = ?)),?,?,?,?);";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+	public PackageDao() {
+		dbconn = MysqlConnect.getInstance();
+	}
+	
+	//여행상품 등록
+	 public void insert(Package p) {
+	        Connection conn = dbconn.getConn();
+	        String sql = "insert into product (departflight_id, arriveflight_id, agency, destination, period, manual, isHotel, flight_type, product_price) values(?,?,?,(select destination from flight where flight_id=?),datediff((SELECT start_time FROM flight where flight_id = ?), (SELECT start_time FROM flight where flight_id = ?)),?,?,?,?);";
+	        try {
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, p.getDepartflight_id());
-            pstmt.setString(2, p.getArriveflight_id());
-            pstmt.setString(3, p.getAgency());
-            pstmt.setString(4, p.getDepartflight_id());
-            pstmt.setString(5, p.getArriveflight_id());
-            pstmt.setString(6, p.getDepartflight_id());
-            pstmt.setString(7, p.getManual());
-            pstmt.setBoolean(8, p.isHotel());
-            pstmt.setBoolean(9, p.isFlight_type());
-            pstmt.setInt(10, p.getProduct_price());
+	            pstmt.setString(1, p.getDepartflight_id());
+	            pstmt.setString(2, p.getArriveflight_id());
+	            pstmt.setString(3, p.getAgency());
+	            pstmt.setString(4, p.getDepartflight_id());
+	            pstmt.setString(5, p.getArriveflight_id());
+	            pstmt.setString(6, p.getDepartflight_id());
+	            pstmt.setString(7, p.getManual());
+	            pstmt.setBoolean(8, p.isHotel());
+	            pstmt.setBoolean(9, p.isFlight_type());
+	            pstmt.setInt(10, p.getProduct_price());
 
-            int cnt = pstmt.executeUpdate();
+	            int cnt = pstmt.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	 
+	 
+	//국가명으로 검색
+	//public ArrayList<Package> SearchByNation(String nation) {
+	public void SearchByNation(String nation) {
+		ResultSet rs = null;
+		//ArrayList<Package> list = new ArrayList<Package>();
+		
+		Connection conn = dbconn.getConn();
+		
+		//국가명 테이블 필요
+		String sql = "select * from product where nation = ?";
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, nation);
+			
+			rs = pstmt.executeQuery();
+			
+			rs.last();
+			int rowcnt = rs.getRow();
+			rs.beforeFirst();
+			
+			if (rowcnt == 0) {
+				System.out.println(nation + "(으)로 등록된 상품이 없습니다.");
+			}
+			
+			while(rs.next()) {
+				int num = rs.getInt(1);
+				String depart_id = rs.getString(2);
+				String arrive_id = rs.getString(3);
+				String agenc = rs.getString(4);
+				String destination = rs.getString(5);
+				int period = rs.getInt(6);
+				String manual = rs.getString(7);
+				boolean hotel = rs.getBoolean(8);
+				boolean flight_type = rs.getBoolean(9);
+				int price = rs.getInt(10);
+				
+				System.out.println("product_num: " + num);
+				System.out.println("departflight_id: " + depart_id);
+				System.out.println("arriveflight_id: " + arrive_id);
+				System.out.println("agency: " + agenc);
+				System.out.println("destination: " + destination);
+				System.out.println("period: " + period);
+				System.out.println("manual: " + manual);
+				System.out.println("isHotel: " + hotel);
+				System.out.println("flight_type: " + flight_type);
+				System.out.println("product_price: " + price);	
+				System.out.println("=============================");
+				
+				//list.add(new Package(num, departflight_id, arriveflight_id, agency, destination, period, manual, hotel, flight_type, price));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		//return list;
+	}
 
-    public void update_departflightid(String product_num, String flightID) {
+	
+	//항공사로 검색
+	//public ArrayList<Package> SearchByAgency(String air_corp) {
+	public void SearchByAgency(String agency) {
+		ResultSet rs = null;
+		//ArrayList<Package> list = new ArrayList<Package>();
+		
+		Connection conn = dbconn.getConn();
+		
+		//국가명 테이블 필요
+		String sql = "select * from product where agency = ?";
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, agency);
+			
+			rs = pstmt.executeQuery();
+			
+			rs.last();
+			int rowcnt = rs.getRow();
+			rs.beforeFirst();
+			
+			if (rowcnt == 0) {
+				System.out.println(agency + "(으)로 등록된 상품이 없습니다.");
+			}
+			
+			while(rs.next()) {
+				int num = rs.getInt(1);
+				String depart_id = rs.getString(2);
+				String arrive_id = rs.getString(3);
+				String agenc = rs.getString(4);
+				String destination = rs.getString(5);
+				int period = rs.getInt(6);
+				String manual = rs.getString(7);
+				boolean hotel = rs.getBoolean(8);
+				boolean flight_type = rs.getBoolean(9);
+				int price = rs.getInt(10);
+				
+				System.out.println("product_num: " + num);
+				System.out.println("departflight_id: " + depart_id);
+				System.out.println("arriveflight_id: " + arrive_id);
+				System.out.println("agency: " + agenc);
+				System.out.println("destination: " + destination);
+				System.out.println("period: " + period);
+				System.out.println("manual: " + manual);
+				System.out.println("isHotel: " + hotel);
+				System.out.println("flight_type: " + flight_type);
+				System.out.println("product_price: " + price);	
+				System.out.println("=============================");
+				
+				//list.add(new Package(num, departflight_id, arriveflight_id, agency, destination, period, manual, hotel, flight_type, price));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		//return list;
+	}
+	
+	//전체 검색 기능
+	//public ArrayList<Package> SearchAll() {
+	public void SearchAll() {
+		ResultSet rs = null;
+		//ArrayList<Package> list = new ArrayList<Package>();
+		
+		Connection conn = dbconn.getConn();
+		
+		String sql = "select * from product";
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				int num = rs.getInt(1);
+				String depart_id = rs.getString(2);
+				String arrive_id = rs.getString(3);
+				String agency = rs.getString(4);
+				String destination = rs.getString(5);
+				int period = rs.getInt(6);
+				String manual = rs.getString(7);
+				boolean hotel = rs.getBoolean(8);
+				boolean flight_type = rs.getBoolean(9);
+				int price = rs.getInt(10);
+				
+				System.out.println("product_num: " + num);
+				System.out.println("departflight_id: " + depart_id);
+				System.out.println("arriveflight_id: " + arrive_id);
+				System.out.println("agency: " + agency);
+				System.out.println("destination: " + destination);
+				System.out.println("period: " + period);
+				System.out.println("manual: " + manual);
+				System.out.println("isHotel: " + hotel);
+				System.out.println("flight_type: " + flight_type);
+				System.out.println("product_price: " + price);	
+				System.out.println("=============================");
+				
+				//list.add(new Package(num, departflight_id, arriveflight_id, agency, destination, period, manual, hotel, flight_type, price));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try{
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//return list;
+	}
+	
+	public void update_departflightid(String product_num, String flightID) {
         Connection conn = dbconn.getConn();
         ResultSet rs = null;
         // int period_return = 0;
@@ -366,5 +556,32 @@ public class PackageDao {
     //         }
     //     }
     // }
-
+	
+		//해당 상품 번호 삭제
+		public boolean delProduct(int pnum) {
+			Connection conn = dbconn.getConn();
+			
+			String sql = "delete from product where product_number = ?";
+			
+			try {
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setInt(1, pnum);
+				
+				int cnt = pstmt.executeUpdate();
+				if (cnt > 0) {
+					return true;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return false;
+		}
+		
 }

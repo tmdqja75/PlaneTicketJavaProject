@@ -1,44 +1,48 @@
-package Package;
+package travel_agency;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PackageService {
-    private PackageDao dao;
-
-    public PackageService() {
-        dao = new PackageDao();
-    }
-
-    public void addPackage(Scanner sc) {
+	private PackageDao dao;
+	public static String Product_Num = "";
+	public static String Nation = "";
+	
+	public PackageService() {
+		dao = new PackageDao();
+	}
+	
+	//¿©Çà»óÇ° µî·Ï
+	public void addPackage(Scanner sc) {
         // int min = 100000;
         // int max = 999999;
         // String prod_num = String.valueOf((int) (Math.random() * (max - min + 1) + min));
 
-        System.out.println("ì¶œë°œ í•­ê³µë²ˆí˜¸: ");
+        System.out.println("Ãâ¹ß Ç×°ø¹øÈ£: ");
         String departflight_id = sc.next();
 
-        System.out.println("ë„ì°© í•­ê³µë²ˆí˜¸: ");
+        System.out.println("µµÂø Ç×°ø¹øÈ£: ");
         String arriveflight_id = sc.next();
 
-        System.out.println("ì—¬í–‰ì‚¬: ");
+        System.out.println("¿©Çà»ç: ");
         String agency = sc.next();
 
-        // System.out.println("ëª©ì ì§€: ");
+        // System.out.println("¸ñÀûÁö: ");
         // String dest = sc.next();
 
-        // System.out.println("ê¸°ê°„: ");
+        // System.out.println("±â°£: ");
         // String period = sc.next();
 
-        System.out.println("ì„¤ëª…: ");
+        System.out.println("¼³¸í: ");
         String manual = sc.next();
 
-        System.out.println("í˜¸í…” ì—¬ë¶€(true/false): ");
+        System.out.println("È£ÅÚ ¿©ºÎ(true/false): ");
         Boolean hotel = sc.nextBoolean();
 
-        System.out.println("í•´ì™¸(true)/êµ­ë‚´(false)");
+        System.out.println("ÇØ¿Ü(true)/±¹³»(false)");
         Boolean flight_type = sc.nextBoolean();
 
-        System.out.println("ê°€ê²©: ");
+        System.out.println("°¡°İ: ");
         int price = sc.nextInt();
 
         Package p = new Package(departflight_id, arriveflight_id, agency, manual, hotel, flight_type, price);
@@ -46,17 +50,42 @@ public class PackageService {
         dao.insert(p);
     }
 
-    public void editDepartflight(Scanner sc) {
+	
+	//¿øÇÏ´Â ±¹°¡¸íÀÇ »óÇ° Ãâ·Â
+	public void SearchByNation(Scanner sc) {
+		System.out.println("Ã£À» »óÇ°ÀÇ ±¹°¡¸íÀ» ÀÔ·ÂÇÏ¼¼¿ä:");
+		String nation = sc.next();
+		
+		//ArrayList<Package> list = dao.SearchByNation(nation);
+		dao.SearchByNation(nation);
+	}
+	
+	//¿øÇÏ´Â Ç×°ø»çÀÇ »óÇ° Ãâ·Â
+	public void SearchByAgency(Scanner sc) {
+		System.out.println("Ã£À» »óÇ°ÀÇ Ç×°ø»ç¸¦ ÀÔ·ÂÇÏ¼¼¿ä:");
+		String agency = sc.next();
+		
+		//ArrayList<Package> list = dao.SearchByAgency(agency);
+		dao.SearchByAgency(agency);
+	}
+	
+	//¸ğµç ¿©Çà»óÇ° Ãâ·Â
+	public void SearchAll() {
+		dao.SearchAll();
+	}
+	
+	//µµÂø ºñÇà±â ¼öÁ¤
+	public void editDepartflight(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
 
-        System.out.println("ìˆ˜ì •ëœ ì¶œë°œí•­ê³µë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤µÈ Ãâ¹ßÇ×°ø¹øÈ£: ");
         String flight_id = sc.next();
 
         int per = dao.getDepartPeriod(prod_num, flight_id);
         if (per < 0) {
-            System.out.println("ì„ íƒëœ í‘œëŠ” ë„ì°©ì¼ ì´í›„ì— ì¶œë°œí•©ë‹ˆë‹¤. ìˆ˜ì • ì¢…ë£Œ.");
+            System.out.println("¼±ÅÃµÈ Ç¥´Â µµÂøÀÏ ÀÌÈÄ¿¡ Ãâ¹ßÇÕ´Ï´Ù. ¼öÁ¤ Á¾·á.");
         } else {
             dao.update_departflightid(prod_num, flight_id);
             dao.update_period(prod_num, per);
@@ -64,17 +93,18 @@ public class PackageService {
 
     }
 
+	//Ãâ¹ß ºñÇà±â ¼öÁ¤
     public void editArriveflight(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
 
-        System.out.println("ìˆ˜ì •ëœ ë„ì°© í•­ê³µë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤µÈ µµÂø Ç×°ø¹øÈ£: ");
         String flight_id = sc.next();
 
         int per = dao.getDepartPeriod(prod_num, flight_id);
         if (per < 0) {
-            System.out.println("ì„ íƒëœ í‘œëŠ” ì¶œë°œì¼ ì´ì „ì— ë„ì°©í•©ë‹ˆë‹¤. ìˆ˜ì • ì¢…ë£Œ.");
+            System.out.println("¼±ÅÃµÈ Ç¥´Â Ãâ¹ßÀÏ ÀÌÀü¿¡ µµÂøÇÕ´Ï´Ù. ¼öÁ¤ Á¾·á.");
         } else {
             dao.update_arriveflightid(prod_num, flight_id);
             dao.update_period(prod_num, per);
@@ -82,11 +112,12 @@ public class PackageService {
 
     }
 
+    //¿©Çà»ç ¼öÁ¤
     public void editAgency(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
-        System.out.println("ìˆ˜ì •ëœ ì—¬í–‰ì‚¬: ");
+        System.out.println("¼öÁ¤µÈ ¿©Çà»ç: ");
         String agency = sc.next();
 
         dao.update_agency(prod_num, agency);
@@ -94,19 +125,21 @@ public class PackageService {
 
     // public void editDest(Scanner sc) {
 
-    //     System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+    //     System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
     //     String prod_num = sc.next();
-    //     System.out.println("ìˆ˜ì •ëœ ëª©ì ì§€: ");
+    //     System.out.println("¼öÁ¤µÈ ¸ñÀûÁö: ");
     //     String dest = sc.next();
 
     //     dao.update_dest(prod_num, dest);
     // }
 
+    
+    //¼³¸í ¼öÁ¤
     public void editManual(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
-        System.out.println("ìˆ˜ì •ëœ ì„¤ëª…: ");
+        System.out.println("¼öÁ¤µÈ ¼³¸í: ");
         String man = sc.next();
 
         dao.update_manual(prod_num, man);
@@ -114,31 +147,45 @@ public class PackageService {
 
     public void editHotel(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
-        System.out.println("í˜¸í…” í¬í•¨ ì—¬ë¶€: ");
+        System.out.println("È£ÅÚ Æ÷ÇÔ ¿©ºÎ: ");
         Boolean hotel = sc.nextBoolean();
 
         dao.update_hotel(prod_num, hotel);
     }
 
+    //±¹³»¿Ü ¿©Çà ¿©ºÎ ¼öÁ¤
     public void editType(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
-        System.out.println("í•´ì™¸ ì—¬ë¶€ (true/false): ");
+        System.out.println("ÇØ¿Ü ¿©ºÎ (true/false): ");
         Boolean man = sc.nextBoolean();
 
         dao.update_flighttype(prod_num, man);
     }
 
+    //°¡°İ ¼öÁ¤
     public void editPrice(Scanner sc) {
 
-        System.out.println("ìˆ˜ì •í•  ì—¬í–‰ íŒ¨í‚¤ì§€ ê³ ìœ  ë²ˆí˜¸: ");
+        System.out.println("¼öÁ¤ÇÒ ¿©Çà ÆĞÅ°Áö °íÀ¯ ¹øÈ£: ");
         String prod_num = sc.next();
-        System.out.println("ìˆ˜ì •ëœ ê°€ê²©: ");
+        System.out.println("¼öÁ¤µÈ °¡°İ: ");
         int price = sc.nextInt();
 
         dao.update_flighttype(prod_num, price);
     }
+
+	//»óÇ°»èÁ¦
+	public void DeleteProduct(Scanner sc) {
+		System.out.print("»èÁ¦ÇÒ »óÇ°ÀÇ ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä :");
+		int num = sc.nextInt();
+		boolean flag = dao.delProduct(num);
+		if(flag) {
+			System.out.println(num+"¹ø »óÇ°ÀÌ »èÁ¦µÇ¾ú½À´Ï´Ù.");
+		}else {
+			System.out.println("¾ø´Â »óÇ° ¹øÈ£ÀÔ´Ï´Ù");
+		}
+	}
 }
