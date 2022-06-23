@@ -123,12 +123,5 @@ public class Product {
 				+ ", flight_type=" + flight_type + ", product_price=" + product_price + "]";
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 
 }

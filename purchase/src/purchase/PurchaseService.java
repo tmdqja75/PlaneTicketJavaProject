@@ -12,7 +12,7 @@ public class PurchaseService {
 
 	// 1. 상품 조회
 	public void searchProducts() {
-		ArrayList<Product> list = dao.printProducts(); 
+		ArrayList<Product> list = dao.printProducts();
 		for (Product p : list) {
 			System.out.println(p);
 		}
@@ -22,7 +22,7 @@ public class PurchaseService {
 	// 2. 여행상품 구매
 	public void buyProduct(Scanner sc) {
 		searchProducts();
-		ArrayList <Integer> tmp = new ArrayList <Integer>(); // 여권번호 받을 arraylist
+		ArrayList<Integer> tmp = new ArrayList<Integer>(); // 여권번호 받을 arraylist
 		String pwd = null;
 		System.out.println("구매할 제품 번호를 입력하세요.");
 		int number = sc.nextInt();
@@ -31,46 +31,46 @@ public class PurchaseService {
 		boolean flag = dao.checkAbroad(number); // 해외여행인지 확인
 		if (flag) {
 			System.out.println("여권 등록이 필요한 상품입니다. 등록한 여권번호를 입력해주세요.");
-			for (int i=1; i<=cnt; i++) {
+			for (int i = 1; i <= cnt; i++) {
 				System.out.println(i + " 번째 여권 번호 : ");
 				int pass_id = sc.nextInt();
-				if (dao.checkPassport(pass_id)<0) { // 여권 번호로 여권 있는지 체크
+				if (dao.checkPassport(pass_id) < 0) { // 여권 번호로 여권 있는지 체크
 					System.out.println("등록되어있지 않은 여권번호입니다.");
 					return;
-				}
-				else {
+				} else {
 					tmp.add(pass_id);
 				}
 			}
-			 
+
 		}
 		System.out.println("아이디를 입력하세요.");
 		String id = sc.next();
 		String check = dao.checkIsbuy(id); // id로 구매내역이 있는지 확인
-		if(check != "") {
+		if (check != "") {
 			System.out.println("구매한 이력이 있습니다. 이전에 입력한 비밀번호를 입력해주세요,");
 			pwd = sc.next();
 			if (!check.equals(pwd)) { // 이전에 입력한 비밀번호가 지금 입력한 비밀번호와 다를경우
 				System.out.println("입력한 비밀번호가 틀립니다.");
 				return;
-				
+
 			}
-		}else {
+		} else {
 			System.out.println("비밀번호를 입력하세요.");
 			pwd = sc.next();
 		}
-		
-		
-		
-		// num(자동할당), passport_id 는 일단 0으로 입력
-		for(int i = 0; i<tmp.size(); i++) {
-			dao.purchase(new Reservation(0, id, pwd, number, cnt, (int)tmp.get(i), false));
-		}
-		
 
-		
+		if (tmp.size() == 0) { // 국내여행 일경우 
+			for (int i = 0; i < cnt; i++) {
+				dao.purchase(new Reservation(0, id, pwd, number, cnt, 0, false));
+			}
+		} else {
+
+			// 해외 여행일경우
+			for (int i = 0; i < tmp.size(); i++) {
+				dao.purchaseAbroad(new Reservation(0, id, pwd, number, cnt, (int) tmp.get(i), false));
+			}
+		}
 	}
-	
 
 	// 3. 예매 확인
 	public void checkReservation(Scanner sc) {
@@ -79,7 +79,7 @@ public class PurchaseService {
 		String id = sc.next();
 		System.out.println("구매시 입력한 비밀번호를 입력하세요.");
 		String pwd = sc.next();
-		
+
 		list = dao.search(id, pwd); // 아이디 패스워드로 db검색하여 list로 반환
 		if (list.size() != 0) { // list != null => list.size() !=0 으로 변경 리스트가 비어있지않으면 출력
 			for (Reservation r : list) {
@@ -116,16 +116,13 @@ public class PurchaseService {
 
 	}
 
-	
-
 	// 5. 결제 취소
 	public void cancelPay(Scanner sc) {
 		System.out.println("구매시 입력한 아이디를 입력하세요.");
 		String id = sc.next();
 		System.out.println("구매시 입력한 비밀번호를 입력하세요.");
 		String pwd = sc.next();
-		
-		
+
 		boolean paycheck = dao.checkIspay(id); // 결제했었는지 체크
 		if (paycheck) {
 			boolean flag = dao.cancelIspay(id, pwd); // 아디디 비밀번호 체크
@@ -135,10 +132,10 @@ public class PurchaseService {
 			} else {
 				System.out.println("잘못된 정보를 입력하셨습니다.");
 			}
-		}else {
+		} else {
 			System.out.println("결제가 완료되지 않은 상품이거나, 잘못된 정보를 입력하셨습니다.");
 		}
-		
+
 	}
 
 	// 6. 예매 취소
@@ -157,4 +154,3 @@ public class PurchaseService {
 	}
 
 }
-

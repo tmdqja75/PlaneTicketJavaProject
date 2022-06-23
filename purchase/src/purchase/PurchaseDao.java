@@ -48,8 +48,8 @@ public class PurchaseDao {
 
 	}
 
-	// 2. 여행상품 구매
-	public void purchase(Reservation r) {
+	// 2. 여행상품 구매(해외여행 일경우)
+	public void purchaseAbroad(Reservation r) {
 		Connection conn = dbconn.getConn();
 
 		String sql = "insert into purchaseinfo(customer_id, customer_pwd, product_number, ticket_count, passport_id, isPay) "
@@ -63,6 +63,38 @@ public class PurchaseDao {
 			pstmt.setInt(4, r.getTicket_count());
 			pstmt.setInt(5, r.getPassport_id());
 			pstmt.setBoolean(6, r.isPay());
+
+				pstmt.executeUpdate();
+			
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	// 여행상품 구매 국내일경우
+	public void purchase(Reservation r) {
+		Connection conn = dbconn.getConn();
+
+		String sql = "insert into purchaseinfo(customer_id, customer_pwd, product_number, ticket_count, isPay) "
+				+ "values(?, ?, ?, ?, ?)";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, r.getCustomer_id());
+			pstmt.setString(2, r.getCustomer_pwd());
+			pstmt.setInt(3, r.getProduct_number());
+			pstmt.setInt(4, r.getTicket_count());
+			pstmt.setBoolean(5, r.isPay());
 
 				pstmt.executeUpdate();
 			
@@ -545,38 +577,38 @@ public class PurchaseDao {
 				return -1;
 			}
 	
-	//
-	public boolean updatePassport(int num, String id) {
-	Connection conn = dbconn.getConn();
-
-	String sql = "update purchaseinfo set passport_id = "
-			+ "(select passport_id from passport where passport_id = ?)"
-			+ "where num in (select * from (select min(num) from purchaseinfo where customer_id = ?)as temp);";
-
-	PreparedStatement pstmt;
-	try {
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, num);
-		pstmt.setString(2, id);
-		int cnt = pstmt.executeUpdate();
-		if (cnt > 0) {
-			return true;
-		}
-	}
-
-	catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} finally {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	return false;
-}
+// 여권 업데이트하려고 update query 만들었는데, 불필요 하여 주석처리
+//	public boolean updatePassport(int num, String id) {
+//	Connection conn = dbconn.getConn();
+//
+//	String sql = "update purchaseinfo set passport_id = "
+//			+ "(select passport_id from passport where passport_id = ?)"
+//			+ "where num in (select * from (select min(num) from purchaseinfo where customer_id = ?)as temp);";
+//
+//	PreparedStatement pstmt;
+//	try {
+//		pstmt = conn.prepareStatement(sql);
+//		pstmt.setInt(1, num);
+//		pstmt.setString(2, id);
+//		int cnt = pstmt.executeUpdate();
+//		if (cnt > 0) {
+//			return true;
+//		}
+//	}
+//
+//	catch (SQLException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	} finally {
+//		try {
+//			conn.close();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+//	return false;
+//}
 	
 	
 			
