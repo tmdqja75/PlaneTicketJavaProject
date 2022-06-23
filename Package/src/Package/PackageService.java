@@ -10,12 +10,15 @@ public class PackageService {
     }
 
     public void addPackage(Scanner sc) {
-        int min = 10000;
-        int max = 99999;
-        String prod_num = String.valueOf((int) (Math.random() * (max - min + 1) + min));
+        // int min = 100000;
+        // int max = 999999;
+        // String prod_num = String.valueOf((int) (Math.random() * (max - min + 1) + min));
 
-        System.out.println("항공번호: ");
-        String flight_id = sc.next();
+        System.out.println("출발 항공번호: ");
+        String departflight_id = sc.next();
+
+        System.out.println("도착 항공번호: ");
+        String arriveflight_id = sc.next();
 
         System.out.println("여행사: ");
         String agency = sc.next();
@@ -23,8 +26,8 @@ public class PackageService {
         // System.out.println("목적지: ");
         // String dest = sc.next();
 
-        System.out.println("기간: ");
-        String period = sc.next();
+        // System.out.println("기간: ");
+        // String period = sc.next();
 
         System.out.println("설명: ");
         String manual = sc.next();
@@ -38,20 +41,45 @@ public class PackageService {
         System.out.println("가격: ");
         int price = sc.nextInt();
 
-        Package p = new Package(prod_num, flight_id, agency, period, manual, hotel, flight_type, price);
+        Package p = new Package(departflight_id, arriveflight_id, agency, manual, hotel, flight_type, price);
 
         dao.insert(p);
     }
 
-    public void editFlight(Scanner sc) {
+    public void editDepartflight(Scanner sc) {
 
         System.out.println("수정할 여행 패키지 고유 번호: ");
         String prod_num = sc.next();
 
-        System.out.println("수정된 항공번호: ");
+        System.out.println("수정된 출발항공번호: ");
         String flight_id = sc.next();
 
-        dao.update_flightid(prod_num, flight_id);
+        int per = dao.getDepartPeriod(prod_num, flight_id);
+        if (per < 0) {
+            System.out.println("선택된 표는 도착일 이후에 출발합니다. 수정 종료.");
+        } else {
+            dao.update_departflightid(prod_num, flight_id);
+            dao.update_period(prod_num, per);
+        }
+
+    }
+
+    public void editArriveflight(Scanner sc) {
+
+        System.out.println("수정할 여행 패키지 고유 번호: ");
+        String prod_num = sc.next();
+
+        System.out.println("수정된 도착 항공번호: ");
+        String flight_id = sc.next();
+
+        int per = dao.getDepartPeriod(prod_num, flight_id);
+        if (per < 0) {
+            System.out.println("선택된 표는 출발일 이전에 도착합니다. 수정 종료.");
+        } else {
+            dao.update_arriveflightid(prod_num, flight_id);
+            dao.update_period(prod_num, per);
+        }
+
     }
 
     public void editAgency(Scanner sc) {
@@ -64,25 +92,15 @@ public class PackageService {
         dao.update_agency(prod_num, agency);
     }
 
-    public void editDest(Scanner sc) {
+    // public void editDest(Scanner sc) {
 
-        System.out.println("수정할 여행 패키지 고유 번호: ");
-        String prod_num = sc.next();
-        System.out.println("수정된 목적지: ");
-        String dest = sc.next();
+    //     System.out.println("수정할 여행 패키지 고유 번호: ");
+    //     String prod_num = sc.next();
+    //     System.out.println("수정된 목적지: ");
+    //     String dest = sc.next();
 
-        dao.update_dest(prod_num, dest);
-    }
-
-    public void editPeriod(Scanner sc) {
-
-        System.out.println("수정할 여행 패키지 고유 번호: ");
-        String prod_num = sc.next();
-        System.out.println("수정된 기간: ");
-        String per = sc.next();
-
-        dao.update_period(prod_num, per);
-    }
+    //     dao.update_dest(prod_num, dest);
+    // }
 
     public void editManual(Scanner sc) {
 

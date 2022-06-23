@@ -2,7 +2,8 @@ package Package;
 
 public class Package {
     private String product_num;
-    private String flight_id;
+    private String departflight_id;
+    private String arriveflight_id;
     private String agency;
     private String destination;
     private String period;
@@ -11,13 +12,13 @@ public class Package {
     private boolean flight_type;
     private int product_price;
 
-    public Package(String product_num, String flight_id, String agency, String period,
+    public Package(String departflight_id, String arriveflight_id,String agency,
             String manual, boolean isHotel, boolean flight_type, int product_price) {
-        this.product_num = product_num;
-        this.flight_id = flight_id;
+        this.departflight_id = departflight_id;
+        this.arriveflight_id = arriveflight_id;
         this.agency = agency;
         // this.destination = destination;
-        this.period = period;
+        // this.period = period;
         this.manual = manual;
         this.isHotel = isHotel;
         this.flight_type = flight_type;
@@ -32,12 +33,21 @@ public class Package {
         this.product_num = product_num;
     }
 
-    public String getFlight_id() {
-        return flight_id;
+
+    public String getDepartflight_id() {
+        return departflight_id;
     }
 
-    public void setFlight_id(String flight_id) {
-        this.flight_id = flight_id;
+    public void setDepartflight_id(String departflight_id) {
+        this.departflight_id = departflight_id;
+    }
+
+    public String getArriveflight_id() {
+        return arriveflight_id;
+    }
+
+    public void setArriveflight_id(String arriveflight_id) {
+        this.arriveflight_id = arriveflight_id;
     }
 
     public String getAgency() {
@@ -98,9 +108,12 @@ public class Package {
 
     @Override
     public String toString() {
-        return "Package [agency=" + agency + ", destination=" + destination + ", flight_id=" + flight_id
-                + ", flight_type=" + flight_type + ", isHotel=" + isHotel + ", manual=" + manual + ", period=" + period
-                + ", product_num=" + product_num + ", product_price=" + product_price + "]";
+        return "Package [agency=" + agency + ", arriveflight_id=" + arriveflight_id + ", departflight_id="
+                + departflight_id + ", destination=" + destination + ", flight_type=" + flight_type + ", isHotel="
+                + isHotel + ", manual=" + manual + ", period=" + period + ", product_num=" + product_num
+                + ", product_price=" + product_price + "]";
     }
+
+    
 
 }
