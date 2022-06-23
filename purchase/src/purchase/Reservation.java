@@ -4,13 +4,13 @@ public class Reservation {
 	private int num;
 	private String customer_id;
 	private String customer_pwd;
-	private String product_number;
+	private int product_number;
 	private int ticket_count;
 	private int passport_id;
 	private boolean isPay;
 	
 	
-	public Reservation(int num, String customer_id, String customer_pwd, String product_number, int ticket_count,
+	public Reservation(int num, String customer_id, String customer_pwd, int product_number, int ticket_count,
 			int passport_id, boolean isPay) {
 		this.num = num;
 		this.customer_id = customer_id;
@@ -52,12 +52,12 @@ public class Reservation {
 	}
 
 
-	public String getProduct_number() {
+	public int getProduct_number() {
 		return product_number;
 	}
 
 
-	public void setProduct_number(String product_number) {
+	public void setProduct_number(int product_number) {
 		this.product_number = product_number;
 	}
 

@@ -22,16 +22,31 @@ public class PurchaseService {
 	// 2. 여행상품 구매
 	public void buyProduct(Scanner sc) {
 		searchProducts();
+		ArrayList <Integer> tmp = new ArrayList <Integer>(); // 여권번호 받을 arraylist
 		String pwd = null;
 		System.out.println("구매할 제품 번호를 입력하세요.");
-		String number = sc.next();
+		int number = sc.nextInt();
+		System.out.println("구매할 매수를 입력하세요.");
+		int cnt = sc.nextInt();
 		boolean flag = dao.checkAbroad(number); // 해외여행인지 확인
 		if (flag) {
-			System.out.println("여권 등록이 필요한 상품입니다. 등록을 안하신 경우 등록해주세요.");
+			System.out.println("여권 등록이 필요한 상품입니다. 등록한 여권번호를 입력해주세요.");
+			for (int i=1; i<=cnt; i++) {
+				System.out.println(i + " 번째 여권 번호 : ");
+				int pass_id = sc.nextInt();
+				if (dao.checkPassport(pass_id)<0) { // 여권 번호로 여권 있는지 체크
+					System.out.println("등록되어있지 않은 여권번호입니다.");
+					return;
+				}
+				else {
+					tmp.add(pass_id);
+				}
+			}
+			 
 		}
 		System.out.println("아이디를 입력하세요.");
 		String id = sc.next();
-		String check = dao.checkIsbuy(id); // id로 구매내력이 있는지 확인
+		String check = dao.checkIsbuy(id); // id로 구매내역이 있는지 확인
 		if(check != "") {
 			System.out.println("구매한 이력이 있습니다. 이전에 입력한 비밀번호를 입력해주세요,");
 			pwd = sc.next();
@@ -45,12 +60,15 @@ public class PurchaseService {
 			pwd = sc.next();
 		}
 		
-		System.out.println("구매할 매수를 입력하세요.");
-		int cnt = sc.nextInt();
+		
 		
 		// num(자동할당), passport_id 는 일단 0으로 입력
-		dao.purchase(new Reservation(0, id, pwd, number, cnt, 0, false));
+		for(int i = 0; i<tmp.size(); i++) {
+			dao.purchase(new Reservation(0, id, pwd, number, cnt, (int)tmp.get(i), false));
+		}
+		
 
+		
 	}
 	
 

@@ -52,19 +52,20 @@ public class PurchaseDao {
 	public void purchase(Reservation r) {
 		Connection conn = dbconn.getConn();
 
-		String sql = "insert into purchaseinfo(customer_id, customer_pwd, product_number, ticket_count, isPay) values(?, ?, ?, ?, ?)";
+		String sql = "insert into purchaseinfo(customer_id, customer_pwd, product_number, ticket_count, passport_id, isPay) "
+				+ "values(?, ?, ?, ?, ?, ?)";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, r.getCustomer_id());
 			pstmt.setString(2, r.getCustomer_pwd());
-			pstmt.setString(3, r.getProduct_number());
+			pstmt.setInt(3, r.getProduct_number());
 			pstmt.setInt(4, r.getTicket_count());
-			pstmt.setBoolean(5, r.isPay());
+			pstmt.setInt(5, r.getPassport_id());
+			pstmt.setBoolean(6, r.isPay());
+
+				pstmt.executeUpdate();
 			
-			for (int i = 0; i<r.getTicket_count();i++) { // Ticker_count만큼 db에 추가
-			pstmt.executeUpdate();
-			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -79,38 +80,38 @@ public class PurchaseDao {
 		}
 
 	}
-	
+
 	// 2.1 구매한 내역이 있는지 확인해서 비밀번호 리턴
-		public String checkIsbuy(String customer_id) {
-			ResultSet rs = null;
-			Connection conn = dbconn.getConn();
-			String sql = "select customer_pwd from purchaseInfo where customer_id = ?";
-			
-			PreparedStatement pstmt;
+	public String checkIsbuy(String customer_id) {
+		ResultSet rs = null;
+		Connection conn = dbconn.getConn();
+		String sql = "select customer_pwd from purchaseInfo where customer_id = ?";
+
+		PreparedStatement pstmt;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, customer_id);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getString(1);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
 			try {
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, customer_id);
-
-				rs = pstmt.executeQuery();
-
-				if (rs.next()) {
-					return rs.getString(1);
-				}
-
+				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} return "";
-			
-			
+			}
 		}
+		return "";
+
+	}
 
 	// 3. 예매확인 - 구매자 id를 입력으로 받아서 해당 id에 해당하는 리스트 반환
 	public ArrayList<Reservation> search(String customer_id, String customer_pwd) {
@@ -119,7 +120,8 @@ public class PurchaseDao {
 
 		Connection conn = dbconn.getConn();
 
-		String sql = "select num, customer_id, product_number, ticket_count, passport_id, isPay	from purchaseInfo where customer_id = ? and customer_pwd = ?";
+		String sql = "select num, customer_id, product_number, ticket_count, passport_id, "
+				+ "isPay	from purchaseInfo where customer_id = ? and customer_pwd = ?";
 		PreparedStatement pstmt;
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -129,7 +131,7 @@ public class PurchaseDao {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {// 비밀번호 부분은 **** 로 출력
-				list.add(new Reservation(rs.getInt(1), rs.getString(2), "****", rs.getString(3), rs.getInt(4),
+				list.add(new Reservation(rs.getInt(1), rs.getString(2), "****", rs.getInt(3), rs.getInt(4),
 						rs.getInt(5), rs.getBoolean(6)));
 			}
 
@@ -178,8 +180,6 @@ public class PurchaseDao {
 		return false;
 	}
 
-
-
 	// 4.1 결제 여부 확인
 	public boolean checkIspay(String id) {
 		Connection conn = dbconn.getConn();
@@ -194,11 +194,11 @@ public class PurchaseDao {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				if (rs.getBoolean(1) == false) {
-				return false;
+					return false;
 				}
-				
-				}
-			
+
+			}
+
 		}
 
 		catch (SQLException e) {
@@ -220,7 +220,8 @@ public class PurchaseDao {
 	public boolean cancelIspay(String id, String pwd) {
 		Connection conn = dbconn.getConn();
 
-		String sql = "update purchaseinfo set isPay = False where customer_id = ? and customer_pwd = ? and isPay = True";
+		String sql = "update purchaseinfo set isPay = False "
+				+ "where customer_id = ? and customer_pwd = ? and isPay = True";
 
 		PreparedStatement pstmt;
 		try {
@@ -278,14 +279,14 @@ public class PurchaseDao {
 	}
 
 	// 해외여행 상품인지 확인
-	public boolean checkAbroad(String s) {
+	public boolean checkAbroad(int num) {
 		Connection conn = dbconn.getConn();
 
 		String sql = "select flight_type from product where flight_id = ?";
 		PreparedStatement pstmt;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, s);
+			pstmt.setInt(1, num);
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
 				boolean flag = rs.getBoolean(1);
@@ -311,7 +312,7 @@ public class PurchaseDao {
 	}
 
 	// id로 product_number 조회(좌석수 처리관련)
-	public String searchProductNumber(String id) {
+	public int searchProductNumber(String id) {
 		Connection conn = dbconn.getConn();
 
 		String sql = "select product_number from purchaseInfo where customer_id = ?";
@@ -324,7 +325,7 @@ public class PurchaseDao {
 
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
-				String number = rs.getString(1);
+				int number = rs.getInt(1);
 				return number;
 			}
 
@@ -339,11 +340,11 @@ public class PurchaseDao {
 				e.printStackTrace();
 			}
 		}
-		return "";
+		return -1;
 	}
 
 	// productnumber로 flightid 조회(좌석수 처리를 위해)
-	public String searchFlightId(String number) {
+	public String searchFlightId(int number) {
 		Connection conn = dbconn.getConn();
 
 		String sql = "select flight_id from product where product_number = ?";
@@ -351,7 +352,7 @@ public class PurchaseDao {
 		PreparedStatement pstmt;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, number);
+			pstmt.setInt(1, number);
 			pstmt.executeQuery();
 
 			ResultSet rs = pstmt.executeQuery();
@@ -408,14 +409,15 @@ public class PurchaseDao {
 
 //	 6. 좌석수 처리(-) , 결제시 적용
 	public boolean minusSeat(String id) {
-		String number = searchProductNumber(id); // 입력된 id로부터 productnumber 받아옴
+		int number = searchProductNumber(id); // 입력된 id로부터 productnumber 받아옴
 		int ticket_count = getTicketNumber(id); // Ticket 갯수
 		String flight_id = searchFlightId(number); // productnumber를 통해 flight_id 받아옴
 		int count = checkSeat(flight_id); // 잔여석
 		if (count - ticket_count >= 0) { // 구매할 티켓 개수가 잔여석보다 작아야함
 			Connection conn = dbconn.getConn();
 
-			String sql = "update flight set remnantCount = (remnantCount - ?) where flight_id = ?"; // 잔여석 - 티켓결제수
+			String sql = "update flight set remnantCount = (remnantCount - ?) where flight_id = ?"; 
+			// 잔여석 - 티켓결제수
 
 			PreparedStatement pstmt;
 			try {
@@ -448,13 +450,14 @@ public class PurchaseDao {
 
 	// 7. 좌석수 처리(+) , 결제 취소시 적용
 	public void plusSeat(String id) {
-		String number = searchProductNumber(id); // id로 productnumber받아옴
+		int number = searchProductNumber(id); // id로 productnumber받아옴
 		int ticket_count = getTicketNumber(id); // Ticket 갯수
 		String flight_id = searchFlightId(number); // productnumber로 flight_id 받아옴
 
 		Connection conn = dbconn.getConn();
 
-		String sql = "update flight set remnantCount = (remnantCount + ?) where flight_id = ?"; // 잔여석 + 티켓 결제취소수
+		String sql = "update flight set remnantCount = (remnantCount + ?) where flight_id = ?"; 
+		// 잔여석 + 티켓 결제취소수
 
 		PreparedStatement pstmt;
 		try {
@@ -507,4 +510,77 @@ public class PurchaseDao {
 		}
 		return -1;
 	}
+
+	// 여권 체크
+	public int checkPassport(int num) {
+		Connection conn = dbconn.getConn();
+
+		String sql = "select passport_id from passport where passport_id = ?";
+		PreparedStatement pstmt;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			pstmt.executeQuery();
+
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				int number = rs.getInt(1);
+				if (number > 0) {
+					return number;
+					}
+		
+			}
+		}
+				catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return -1;
+			}
+	
+	//
+	public boolean updatePassport(int num, String id) {
+	Connection conn = dbconn.getConn();
+
+	String sql = "update purchaseinfo set passport_id = "
+			+ "(select passport_id from passport where passport_id = ?)"
+			+ "where num in (select * from (select min(num) from purchaseinfo where customer_id = ?)as temp);";
+
+	PreparedStatement pstmt;
+	try {
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, num);
+		pstmt.setString(2, id);
+		int cnt = pstmt.executeUpdate();
+		if (cnt > 0) {
+			return true;
+		}
+	}
+
+	catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	return false;
 }
+	
+	
+			
+			
+		
+	}
+
