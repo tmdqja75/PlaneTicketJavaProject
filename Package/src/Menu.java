@@ -1,38 +1,93 @@
-import Package.PackageService;
+package ticket_reservation;
+
 import java.util.Scanner;
 
+import travel_agency.PackageService;
+
 public class Menu {
-    private PackageService packservice;
-
-    public Menu() {
-        packservice = new PackageService();
-    }
-
-    public void run(Scanner sc) {
+	private PackageService packservice;
+	
+	public Menu() {
+		packservice = new PackageService();
+	}
+	
+	public void run(Scanner sc) {
+		boolean flag = true;
+		int m = 0;
+		while (flag) {
+			System.out.println("1.Ç×°ø»ç 2.¿©Çà»ç 3.¿©ÇàÀÚ 4.¿©±Ç 5.Á¾·á");
+			m = sc.nextInt();
+			switch (m) {
+			case 1:
+				break;
+			case 2:
+				runAgency(sc);
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				flag = false;
+				break;
+			}
+		}
+	}
+	
+	public void runAgency(Scanner sc) {
+		boolean flag = true;
+		int m = 0;
+		while(flag) {
+			System.out.println("1.¿©Çà»óÇ°µî·Ï 2.¿©Çà»óÇ°°Ë»ö 3.¿©Çà»óÇ°¼öÁ¤ 4.¿©Çà»óÇ°»èÁ¦ 5.Á¾·á");
+			m = sc.nextInt();
+			switch(m) {
+			case 1:
+				packservice.addPackage(sc);
+				break;
+			case 2:
+				searchProduct(sc);
+				break;
+			case 3:
+				runEditPackage(sc);
+				break;
+			case 4:
+				packservice.DeleteProduct(sc);
+				break;
+			case 5:
+				flag = false;
+				break;
+			}
+		}
+	}
+	
+	public void searchProduct(Scanner sc) {
+		boolean flag = true;
+		int m = 0;
+		while(flag) {
+			System.out.println("1.ºñÇà»ç°Ë»ö 2.¿©Çà»ç°Ë»ö 3.ÀüÃ¼°Ë»ö 4.Á¾·á");
+			m = sc.nextInt();
+			switch(m) {
+			case 1:
+				packservice.SearchByNation(sc);
+				break;
+			case 2:
+				packservice.SearchByAgency(sc);
+				break;
+			case 3:
+				packservice.SearchAll();
+				break;
+			case 7:
+				flag = false;
+				break;
+			}
+		}
+	}
+	
+	public void runEditPackage(Scanner sc) {
         boolean flag = true;
         int m = 0;
         while (flag) {
-            System.out.println("1. ìƒí’ˆ ì¶”ê°€, 2. ìƒí’ˆ ìˆ˜ì •, 3. ì¢…ë£Œ");
-            m = sc.nextInt();
-            switch (m) {
-                case 1:
-                    packservice.addPackage(sc);
-                    break;
-                case 2:
-                    runEditPackage(sc);
-                    break;
-                case 3:
-                    flag = false;
-                    break;
-            }
-        }
-    }
-
-    public void runEditPackage(Scanner sc) {
-        boolean flag = true;
-        int m = 0;
-        while (flag) {
-            System.out.println("1. ì¶œë°œ í•­ê³µí¸ ìˆ˜ì •, 2. ë„ì°© í•­ê³µí¸ ìˆ˜ì • 3. ì—¬í–‰ì‚¬ ìˆ˜ì •, 4. ì„¤ëª… ìˆ˜ì •, 5. í˜¸í…” ì—¬ë¶€ ìˆ˜ì •, 6. í•´ì™¸ ì—¬ë¶€ ìˆ˜ì •, 7. ê°€ê²© ìˆ˜ì • 8. ì¢…ë£Œ");
+            System.out.println("1. Ãâ¹ß Ç×°øÆí ¼öÁ¤, 2. µµÂø Ç×°øÆí ¼öÁ¤ 3. ¿©Çà»ç ¼öÁ¤, 4. ¼³¸í ¼öÁ¤, 5. È£ÅÚ ¿©ºÎ ¼öÁ¤, 6. ÇØ¿Ü ¿©ºÎ ¼öÁ¤, 7. °¡°İ ¼öÁ¤ 8. Á¾·á");
             m = sc.nextInt();
             switch (m) {
                 
